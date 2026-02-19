@@ -1,0 +1,70 @@
+services:
+  configservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      # 安全設定
+      SECURITY_USERNAME: ${SECURITY_USERNAME}
+      SECURITY_PASSWORD: ${SECURITY_PASSWORD}
+      # 加密設定
+      ENCRYPT_KEY: ${ENCRYPT_KEY}
+      # RabbitMQ 設定
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      # Git 儲存庫設定（選用）
+      # CONFIG_GIT_URI: ${CONFIG_GIT_URI}
+      # CONFIG_GIT_USERNAME: ${CONFIG_GIT_USERNAME}
+      # CONFIG_GIT_PASSWORD: ${CONFIG_GIT_PASSWORD}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    # 健康檢查：透過 Spring Boot Actuator 確認應用程式是否正常運作
+    # 其他服務可透過 depends_on + condition: service_healthy 等待此服務就緒後再啟動
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8888/actuator/health" ]
+      interval: 15s       # 每 15 秒檢查一次
+      timeout: 5s         # 單次檢查超過 5 秒視為失敗
+      retries: 5          # 連續 5 次失敗則標記為 unhealthy
+      start_period: 30s   # 容器啟動後等待 30 秒再開始檢查（預留 JVM 啟動時間）
+    stop_grace_period: 35s  # 預留足夠時間讓應用程式完成優雅關閉
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    # 健康檢查：確認 RabbitMQ 的 AMQP 連接埠（5672）可正常連線
+    # configservice 透過 depends_on + condition: service_healthy 等待 RabbitMQ 就緒後再啟動
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s       # 每 10 秒檢查一次
+      timeout: 5s         # 單次檢查超過 5 秒視為失敗
+      retries: 5          # 連續 5 次失敗則標記為 unhealthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+volumes:
+  rabbitmq-data:

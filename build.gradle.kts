@@ -5,18 +5,14 @@ plugins {
 }
 
 group = "com.acenexus.tata"
-
-// 讀取 Git Tag 作為 version，沒有 Tag 時預設為 0.0.1-SNAPSHOT
-val gitVersion: String by lazy {
-    try {
-        val process = ProcessBuilder("git", "describe", "--tags", "--abbrev=0").start()
-        process.inputStream.bufferedReader().readText().trim()
-    } catch (e: Exception) {
-        "0.0.1-SNAPSHOT"
-    }
+version = try {
+    val process = ProcessBuilder("git", "describe", "--tags", "--abbrev=0")
+            .redirectErrorStream(true).start()
+    val output = process.inputStream.bufferedReader().readText().trim()
+    if (process.waitFor() == 0 && output.isNotEmpty()) output else "0.0.1-SNAPSHOT"
+} catch (_: Exception) {
+    "0.0.1-SNAPSHOT"
 }
-
-version = gitVersion
 
 java {
     toolchain {
@@ -34,8 +30,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.cloud:spring-cloud-config-server")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test") // 移除重複的依賴
+    implementation("org.springframework.cloud:spring-cloud-starter-bus-amqp")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -54,7 +50,7 @@ tasks.jar {
     enabled = false
 }
 
-// 保持 bootJar 任務可用
+// 保持 bootJar 任務可用，固定輸出檔名確保 Dockerfile COPY 路徑一致
 tasks.bootJar {
-    enabled = true
+    archiveFileName.set("configservice.jar")
 }

@@ -15,18 +15,6 @@ spring:
             - Path=/api/gateway/**
           filters:
             - StripPrefix=2 # 去掉 /api/gateway 前綴
-        - id: accountservice
-          uri: lb://accountservice
-          predicates:
-            - Path=/api/account/**
-          filters:
-            - StripPrefix=2 # 去掉 /api/account 前綴
-        - id: linebotservice
-          uri: lb://linebotservice
-          predicates:
-            - Path=/api/linebot/**
-          filters:
-            - StripPrefix=2 # 去掉 /api/linebot 前綴
 
 eureka:
   instance:

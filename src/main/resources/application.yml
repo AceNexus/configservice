@@ -1,17 +1,43 @@
 server:
   port: ${SERVER_PORT:8888}
+  shutdown: graceful
 
 spring:
+  application:
+    name: configservice
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   cloud:
     config:
       server:
         git:
-          uri: https://github.com/AceNexus/configservice # 配置中心 Git 儲存庫 URI
+          uri: ${CONFIG_GIT_URI:https://github.com/AceNexus/configservice} # 配置中心 Git 儲存庫 URI
+          username: ${CONFIG_GIT_USERNAME:} # Git 驗證用戶名
+          password: ${CONFIG_GIT_PASSWORD:} # Git 驗證密碼
           searchPaths: configs # 配置文件路徑
           clone-on-start: true # 啟動時同步倉庫
           default-label: main # 預設配置分支
-          timeout: 5 # Git 倉庫請求超時機制
+          timeout: 10 # Git 倉庫請求超時機制
+          force-pull: true # 強制拉取以確保配置為最新
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
   security:
     user:
-      name: ${SECURITY_USERNAME:admin} # 配置服務安全認證用戶名
-      password: ${SECURITY_PASSWORD:password}  # 配置服務安全認證密碼
+      name: ${SECURITY_USERNAME} # 配置服務安全認證用戶名
+      password: ${SECURITY_PASSWORD}  # 配置服務安全認證密碼
+
+encrypt:
+  key: ${ENCRYPT_KEY} # 對稱加密金鑰，用於 /encrypt 與 /decrypt 端點
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,busrefresh
+
+logging:
+  level:
+    org.springframework.security: WARN
