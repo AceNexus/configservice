@@ -9,12 +9,12 @@ spring:
         connect-timeout: 5000       # 連線 timeout
         response-timeout: 10s       # 回應 timeout
       routes:
-        - id: gatewayservice
-          uri: lb://gatewayservice
+        - id: nexusbot
+          uri: lb://nexusbot
           predicates:
-            - Path=/api/gateway/**
+            - Path=/api/linebot/**
           filters:
-            - StripPrefix=2 # 去掉 /api/gateway 前綴
+            - StripPrefix=2 # 去掉 /api/linebot 前綴
 
 eureka:
   instance:
