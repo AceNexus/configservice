@@ -15,6 +15,12 @@ spring:
             - Path=/api/linebot/**
           filters:
             - StripPrefix=2 # 去掉 /api/linebot 前綴
+        - id: nexusbot-test
+          uri: lb://nexusbot-test
+          predicates:
+            - Path=/api/linebot-test/**
+          filters:
+            - StripPrefix=2 # 去掉 /api/linebot-test 前綴
 
 eureka:
   instance:
