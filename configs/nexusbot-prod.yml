@@ -97,6 +97,17 @@ osm:
   timeout-ms: ${OSM_TIMEOUT:15000}
   user-agent: ${OSM_USER_AGENT:NexusBot/1.0}
   carousel-max-items: ${OSM_CAROUSEL_MAX_ITEMS:10}
+  toilet-tags:
+    - amenity=toilets          # 公共廁所
+    - amenity=public_bookcase  # 部分公共設施含廁所
+    - building=toilets         # 廁所建築
+  facility-tags:
+    - amenity=restaurant       # 餐廳
+    - amenity=cafe             # 咖啡廳
+    - amenity=fast_food        # 速食店
+    - shop=convenience         # 便利商店
+    - shop=supermarket         # 超市
+    - amenity=fuel             # 加油站
 
 # ==========================================
 # 安全設定
