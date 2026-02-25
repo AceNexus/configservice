@@ -46,8 +46,6 @@ line:
   bot:
     channel-token: ${LINE_CHANNEL_TOKEN}
     channel-secret: ${LINE_CHANNEL_SECRET}
-  liff:
-    id: ${LINE_LIFF_ID:}
 
 # ==========================================
 # Groq AI
@@ -72,22 +70,6 @@ email:
   auth: true
   starttls: true
   debug: false
-
-# ==========================================
-# Fugle API
-# ==========================================
-fugle:
-  api-key: ${FUGLE_API_KEY}
-  websocket-url: wss://api.fugle.tw/marketdata/v1.0/stock/streaming
-  rest-base-url: https://api.fugle.tw/marketdata/v1.0
-  reconnect-delay: 5000
-  max-subscriptions: 5
-
-# ==========================================
-# FinMind API
-# ==========================================
-finmind:
-  api-token: ${FINMIND_API_TOKEN:}
 
 # ==========================================
 # OpenStreetMap API
