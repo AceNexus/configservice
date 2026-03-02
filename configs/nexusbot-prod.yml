@@ -51,7 +51,15 @@ line:
 # Groq AI
 # ==========================================
 groq:
-  api-key: ${GROQ_API_KEY}
+  url: ${GROQ_URL:https://api.groq.com/openai/v1}
+  api-key: ${GROQ_API_KEY:}
+
+# ==========================================
+# Gemini Proxy AI
+# ==========================================
+gemini-proxy:
+  url: ${GEMINI_PROXY_URL:}
+  api-key: ${GEMINI_PROXY_API_KEY:}
 
 ai:
   conversation:
