@@ -32,6 +32,21 @@ spring:
 encrypt:
   key: ${ENCRYPT_KEY} # 對稱加密金鑰，用於 /encrypt 與 /decrypt 端點
 
+# ==========================================
+# 日誌設定
+# ==========================================
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%X{traceId:-}){magenta}] [%clr(%X{spanId:-}){blue}] [%clr(%logger){cyan}] %m%n%wEx"
+  level:
+    root: INFO
+    org.springframework.cloud.config: INFO
+    org.springframework.cloud.bus: INFO
+    org.springframework.security: WARN
+
+# ==========================================
+# Actuator
+# ==========================================
 management:
   endpoints:
     web:
@@ -43,12 +58,3 @@ management:
   otlp:
     tracing:
       endpoint: ${MANAGEMENT_OTLP_TRACING_ENDPOINT:http://tempo:4318/v1/traces}
-
-logging:
-  pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%X{traceId:-}){magenta}] [%clr(%X{spanId:-}){blue}] [%clr(%logger){cyan}] %m%n%wEx"
-  level:
-    root: INFO
-    org.springframework.cloud.config: INFO
-    org.springframework.cloud.bus: INFO
-    org.springframework.security: WARN
