@@ -109,6 +109,8 @@ admin:
 # 日誌設定
 # ==========================================
 logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%logger){cyan}] %m%n%wEx"
   level:
     root: INFO
     com.acenexus.tata.nexusbot: INFO

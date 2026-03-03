@@ -6,6 +6,8 @@ eureka:
     wait-time-in-ms-when-sync-empty: 5000
 
 logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%logger){cyan}] %m%n%wEx"
   level:
     root: INFO
     org.springframework.security: WARN

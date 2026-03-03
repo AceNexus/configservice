@@ -29,3 +29,10 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST:127.0.0.1}:${EUREKA_SERVER_PORT:8761}/eureka/ # Eureka 服務地址
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%logger){cyan}] %m%n%wEx"
+  level:
+    root: INFO
+    org.springframework.security: WARN
