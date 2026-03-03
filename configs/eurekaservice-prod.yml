@@ -5,9 +5,17 @@ eureka:
     eviction-interval-timer-in-ms: 10000
     wait-time-in-ms-when-sync-empty: 5000
 
+management:
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}   # 全取樣；流量大時透過環境變數調降
+  otlp:
+    tracing:
+      endpoint: ${MANAGEMENT_OTLP_TRACING_ENDPOINT:http://tempo:4318/v1/traces}
+
 logging:
   pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%logger){cyan}] %m%n%wEx"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%X{traceId:-}){magenta}] [%clr(%X{spanId:-}){blue}] [%clr(%logger){cyan}] %m%n%wEx"
   level:
     root: INFO
     org.springframework.security: WARN

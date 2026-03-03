@@ -37,10 +37,16 @@ management:
     web:
       exposure:
         include: health,busrefresh
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.0} # 預設關閉；Docker 部署在 .env 設 1.0 開啟
+  otlp:
+    tracing:
+      endpoint: ${MANAGEMENT_OTLP_TRACING_ENDPOINT:http://tempo:4318/v1/traces}
 
 logging:
   pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%logger){cyan}] %m%n%wEx"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%clr(%t){faint}] [%clr(%X{traceId:-}){magenta}] [%clr(%X{spanId:-}){blue}] [%clr(%logger){cyan}] %m%n%wEx"
   level:
     root: INFO
     org.springframework.cloud.config: INFO
