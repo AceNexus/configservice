@@ -26,6 +26,8 @@ eureka:
   instance:
     prefer-ip-address: true
     ip-address: ${SERVER_HOST:127.0.0.1}
+    lease-renewal-interval-in-seconds: 10    # heartbeat 間隔（預設 30s），縮短以加快 re-register 偵測
+    lease-expiration-duration-in-seconds: 30  # Eureka server 認定 lease 過期的時間
   client:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST:127.0.0.1}:${EUREKA_SERVER_PORT:8761}/eureka/ # Eureka 服務地址

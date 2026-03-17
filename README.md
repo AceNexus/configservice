@@ -303,3 +303,44 @@ git push && git push --tags        # 4. Push
 - [Spring Cloud Config 官方文件](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/)
 - [Spring Cloud Bus 官方文件](https://docs.spring.io/spring-cloud-bus/docs/current/reference/html/)
 - [RabbitMQ 管理指南](https://www.rabbitmq.com/management.html)
+
+---
+
+## 部署
+
+### 建立 K8s Secret
+
+```bash
+kubectl create secret generic configservice-secret -n acenexus \
+  --from-literal=security-username=admin \
+  --from-literal=security-password=password \
+  --from-literal=encrypt-key=<JCE加密金鑰> \
+  --from-literal=rabbitmq-user=admin \
+  --from-literal=rabbitmq-pass=password
+```
+
+### 建置 Image
+
+```bash
+./gradlew bootJar
+docker build -t configservice:local .
+```
+
+> Java 21 需要指定 JAVA_HOME：
+> ```powershell
+> $env:JAVA_HOME = 'C:\Users\User\.jdks\temurin-21.0.5'; .\gradlew bootJar
+> ```
+
+### 套用 K8s YAML
+
+```bash
+kubectl apply -f k8s/deployment.yaml -n acenexus
+kubectl get pods -n acenexus -w
+```
+
+### 本機存取（port-forward）
+
+```bash
+kubectl port-forward svc/configservice 8888:8888 -n acenexus
+kubectl port-forward svc/rabbitmq 15672:15672 -n acenexus
+```
