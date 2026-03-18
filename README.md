@@ -301,8 +301,7 @@ git push && git push --tags        # 4. Push
 
 ## CI/CD
 
-Push to `main` 觸發完整流程：test（compile + 單元測試）→ build JAR → docker build → Trivy 掃描 → push GHCR →
-更新 [AceNexus/deploy](https://github.com/AceNexus/deploy) → ArgoCD 自動部署。PR to `main` 僅跑 test。
+Push to `main` 觸發完整流程：test（compile + 單元測試）→ build JAR → docker build → push GHCR → 更新 [AceNexus/deploy](https://github.com/AceNexus/deploy) → ArgoCD 自動部署。PR to `main` 僅跑 test。
 
 ### 必要設定
 
