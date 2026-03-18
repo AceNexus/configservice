@@ -223,7 +223,8 @@ environment:
    ```bash
    ./gradlew bootJar
    ```
-2. 將 `build/libs/configservice.jar`、`docs/docker/Dockerfile`、`docs/docker/docker-compose.yml`、`docs/docker/.dockerignore`、`docs/docker/.env.example` 複製到部署主機的同一目錄
+2. 將 `build/libs/configservice.jar`、`docs/docker/Dockerfile`、`docs/docker/docker-compose.yml`、`docs/docker/.dockerignore`、`docs/docker/.env.example`
+複製到部署主機的同一目錄
 3. 將 `.env.example` 改名為 `.env`，填入實際的帳號密碼與加密金鑰
 4. 在該目錄下啟動：
    ```bash
@@ -300,38 +301,33 @@ git push && git push --tags        # 4. Push
 
 ## CI/CD
 
-Push 到 `main` branch 會自動觸發 GitHub Actions（`.github/workflows/ci.yml`）：
+Push to `main` 觸發完整流程：test（compile + 單元測試）→ build JAR → docker build → Trivy 掃描 → push GHCR →
+更新 [AceNexus/deploy](https://github.com/AceNexus/deploy) → ArgoCD 自動部署。PR to `main` 僅跑 test。
 
-```
-push to main
-  ↓
-[test]   gradle build（compile + test）
-  ↓ 通過
-[release] gradle bootJar
-          → docker build → Trivy 漏洞掃描（HIGH/CRITICAL 中止）
-          → push ghcr.io/acenexus/configservice:<sha> + :latest
-          → 更新 deploy repo k8s/configservice/deployment.yaml 的 image tag
-             → ArgoCD 偵測變動，自動部署至 K8s
-```
+### 必要設定
 
-### 必要設定：GitHub Secret
+release job 需要寫入 [AceNexus/deploy](https://github.com/AceNexus/deploy)，須先產生 GitHub PAT 再加入各 repo 的 Secrets。
 
-release job 需要寫入 [AceNexus/deploy](https://github.com/AceNexus/deploy) repo，須在本 repo 設定：
+**Step 1：產生 PAT**
 
-**Settings → Secrets and variables → Actions → New repository secret**
+GitHub 右上角頭像 → Settings → Developer settings → Personal access tokens → Tokens (classic) → **Generate new token (
+classic)**，勾選 `repo`，產生後立即複製。
 
-| 名稱 | 說明 |
-|------|------|
-| `DEPLOY_REPO_PAT` | 擁有 `AceNexus/deploy` Contents:write 權限的 GitHub PAT |
+**Step 2：加入各 repo 的 Secrets**
 
-> PAT 建立：GitHub 右上角頭像 → Settings → Developer settings → Personal access tokens → Tokens (classic)，勾選 `repo` 權限。
+到各個 repo 操作：Settings → Secrets and variables → Actions → **New repository secret**
 
-### 觸發 CI
+- `github.com/AceNexus/configservice`
 
-```bash
-git push          # push to main → 觸發 test + release
-# PR to main      → 僅觸發 test（不執行 release）
-```
+| Name              | Secret       |
+|-------------------|--------------|
+| `DEPLOY_REPO_PAT` | 上一步複製的 token |
+
+各個 repo 可共用同一個 token。
+
+### 驗證
+
+push 後至 **Actions** tab 確認 `test` / `release` job 皆通過，`AceNexus/deploy` 出現新的 `[skip ci]` commit 即表示部署觸發完成。
 
 ## 參考資源
 
