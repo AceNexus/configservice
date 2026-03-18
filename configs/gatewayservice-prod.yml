@@ -4,9 +4,6 @@ spring:
       cache:
         ttl: 5s # 縮短 cache 過期時間（預設 35s），讓 Eureka instance 更新更快反映
         capacity: 256
-      health-check:
-        refetch-instances: true # health check 後重新拉 instance list
-        refetch-instances-interval: 10s # 每 10s 重新檢查 instance 健康狀態
     gateway:
       discovery:
         locator:
