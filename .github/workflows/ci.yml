@@ -100,4 +100,4 @@ jobs:
           git config user.name "acenexus-bot"
           git add k8s/configservice/deployment.yaml
           git diff --cached --quiet && echo "image tag unchanged, skip commit" || \
-            (git commit -m "[skip ci] update configservice to ${{ env.SHORT_SHA }}" && git push)
+            (git commit -m "[skip ci] update configservice to ${{ env.SHORT_SHA }}" && git pull --rebase && git push)
